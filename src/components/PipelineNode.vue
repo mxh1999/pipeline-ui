@@ -49,6 +49,7 @@
   </g>
 </template>
 <script>
+import {inject} from 'vue'
 import stringWidth from 'string-width'
 import PipelineNodeStart from './PipelineNodeStart.vue'
 export default {
@@ -82,11 +83,15 @@ export default {
       default: false
     }
   },
+  inject:['selected1'],
   data() {
     return {
-      nodeClass: 'pipeline-node'
+      nodeClass: 'pipeline-node',
+      selectedIndex: this.selected1.value,
+      update: this.selected1.update,
     }
   },
+
   methods: {
     getText() {
       let maxLength = 14
@@ -103,6 +108,8 @@ export default {
     },
     handleClick() {
       console.log("node click", this.node);
+      console.log("node click", this.index);
+      this.update(this.index)
       this.nodeClass = 'pipeline-node-selected'
       if (this.status != 'start' && this.status != 'end') {
         console.log("call father click")
