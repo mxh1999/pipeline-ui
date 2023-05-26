@@ -2,11 +2,14 @@
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
-    <h2>Pipeline</h2>
+    <h1>Pipeline</h1>
 
-    <div class="setting">
-      
-    </div>
+    <el-collapse v-model="cmd_tab" accordion>
+      <el-collapse-item title="Graph Construction" name="1">
+        <el-input type="textarea" autosize v-model="command"></el-input>
+        <el-button type="textarea" @click="updateGraph">Update</el-button>
+      </el-collapse-item>
+    </el-collapse>
     <div class="msg"> You selected :{{ `index:${selectedIndex}, msg: ${msg}` }}</div>
     <el-tabs v-model="tab" type="card">
       <el-tab-pane label="Pipeline" name="pipeline">
@@ -164,76 +167,10 @@ export default {
         tab: "pipeline",
 
         data: [
-            {
-              name: "Start",
-              hint: "1m23s",
-              status: "start",
-              next: [{ index: 1, weight: 2 }]
-            },
-            {
-              name: "Ammouncement Import",
-              hint: "1m23s",
-              status: "success",
-              next: [{ index: 2, weight: 2 }]
-            },
-            {
-              name: "Employee ID to Onboarding",
-              hint: "2m23s",
-              status: "success",
-              next: [
-                { index: 3, weight: 2 },
-                { index: 4, weight: 2 },
-                { index: 5, weight: 2 },
-                { index: 6, weight: 0 },
-                { index: 7, weight: 1 },
-                { index: 8, weight: 2 },
-                { index: 9, weight: 0 }
-              ]
-            },
-            {
-              name: "Personal Basic Info",
-              hint: "2m23s",
-              status: "unstable",
-              next: [{ index: 10, weight: 2 }]
-            },
-            {
-              name: "地址信息",
-              hint: "2m23s",
-              status: "success",
-              next: [{ index: 10, weight: 0 }]
-            },
-            {
-              name: "Family Info",
-              hint: "2m23s",
-              status: "failure",
-              next: [{ index: 10, weight: 0 }]
-            },
-            {
-              name: "Education Info",
-              hint: "2m23s",
-              status: "running",
-              next: [{ index: 10, weight: 0 }]
-            },
-            {
-              name: "Degree Info",
-              hint: "2m23s",
-              status: "failure",
-              next: [{ index: 10, weight: 0 }]
-            },
-            {
-              name: "Career Info",
-              hint: "2m23s",
-              status: "failure",
-              next: [{ index: 10, weight: 0 }]
-            },
-            {
-              name: "Qualification Info",
-              hint: "2m23s",
-              status: "failure",
-              next: [{ index: 10, weight: 0 }]
-            },
-            { name: "End", hint: "2m23s", status: "end", next: [] }
-          ],
+          {name: "S", hint:"url", status: "start", "next":[]},
+          {name: "S", hint:"url", status: "start", "next":[]},
+          {name: "SB", hint:"SB", status: "success", "next":[{index:0, weight:2}, {index:1, weight:2}]}
+        ],
         form: {
           x:50,
           y: 55,
@@ -245,12 +182,17 @@ export default {
           from: 0,
           to: 0
         },
-        msg: "ha"
+        msg: "ha",
+        cmd_tab : "1",
+        command : ref("")
       };
   },
   methods: {
     handleSelect(node) {
       this.msg = node.name;
+    },
+    updateGraph() {
+      this.msg = this.command;
     }
   },
   // 这边使用provide/inject机制双向数据绑定PipelineNode.vue中的selectedIndex

@@ -1,7 +1,7 @@
 <template>
   <g class="pipeline-node-start">
-    <rect rx="13" id="svg_1" height="26" width="40" y="-13" x="-20" stroke-width="1.5" />
-    <text id="svg_2" x="-13" y="3" class="pipeline-node-start__text">{{label}}</text>
+    <rect rx="13" id="svg_1" height="26" width="25" y="-13" x="-13" stroke-width="1.5" />
+    <text id="svg_2" x="-5" y="4" class="pipeline-node-start__text">S</text>
   </g>
 </template>
 <script>

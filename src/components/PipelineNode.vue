@@ -2,9 +2,8 @@
   <g :transform="'translate('+x+','+y+')'" :class="nodeClass" cursor="pointer" @click="handleClick" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
 
     <pipeline-node-start v-if="status=='start'" :label="label" />
-    <pipeline-node-end v-if="status=='end'" :label="label" />
 
-    <g v-if="status!=='start' && status!=='end'">
+    <g v-if="status!=='start'">
       <g>
         <text :x="getText().x" :y="getText().y" class="pipeline-node-label">{{getText().text}}</text>
         <title>{{label}}</title>
@@ -111,10 +110,8 @@ export default {
       console.log("node click", this.index);
       this.update(this.index)
       this.nodeClass = 'pipeline-node-selected'
-      if (this.status != 'start' && this.status != 'end') {
-        console.log("call father click")
-        this.$emit('faterclick', this.index, this.node)
-      }
+      console.log("call father click")
+      this.$emit('faterclick', this.index, this.node)
     },
     handleMouseEnter() {
       this.nodeClass = 'pipeline-node-selected'

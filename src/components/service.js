@@ -35,6 +35,7 @@ class Pipeline {
    * 判断当前的图是否是一棵树
    */
   isTree() {
+    return true;
     let set = new Set();
     for (let i = 0; i < this.nodes.length; i++) {
       if (this.nodes[i].next) {
@@ -93,7 +94,7 @@ class Pipeline {
       x: this.xstep,
       y: this.ystep,
     });
-    for (let i = 0; i < this.nodes.length; i++) {
+    for (let i = this.nodes.length - 1; i >= 0; i--) {
       let node = this.nodes[i];
       if (!node.next) {
         continue;
@@ -102,7 +103,7 @@ class Pipeline {
         let edge = node.next[j];
         let child = this.nodes[edge.index];
         list.push({
-          path: drawService.drawEdge(node, child),
+          path: drawService.drawEdge(child, node),
           weight: edge.weight,
         });
       }
@@ -128,7 +129,7 @@ class Pipeline {
    */
   calculateAllPosition() {
     if (this.isTree()) {
-      this.assignNodeForTree(0, 0, 0);
+      this.assignNodeForTree(this.nodes.length - 1, 0, 0);
     } else {
       this.assignNodeForGraph();
     }
@@ -169,16 +170,21 @@ class Pipeline {
 
   calCoordinateForMatrix() {
     for (let i = 0; i < this.matrix.length; i++) {
-      for (let j = 0; j < this.matrix.length; j++) {
+      for (let j = 0; j < this.matrix[i].length; j++) {
         let index = this.matrix[i][j];
         if (index != undefined) {
           this.nodes[index].x = this.startx + this.xstep * j;
           this.nodes[index].y = this.starty + this.ystep * i;
           this.width = Math.max(this.width, this.nodes[index].x + this.startx);
-          this.height = Math.max(
-            this.height,
-            this.nodes[index].y + this.starty
-          );
+          this.height = Math.max(this.height, this.nodes[index].y + this.starty);
+        }
+      }
+    }
+    for (let i = 0; i < this.matrix.length; i++) {
+      for (let j = 0; j < this.matrix[i].length; j++) {
+        let index = this.matrix[i][j];
+        if (index != undefined) {
+          this.nodes[index].x = this.width - this.nodes[index].x;
         }
       }
     }
@@ -230,6 +236,7 @@ class Pipeline {
    * 如果有环，返回true
    */
   hasCircle() {
+    return false;
     let list = this.topologicalSorting();
     return list.length < this.nodes.length;
   }
