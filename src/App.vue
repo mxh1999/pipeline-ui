@@ -10,28 +10,34 @@
         <el-button type="textarea" @click="updateGraph">Update</el-button>
       </el-collapse-item>
     </el-collapse>
-    <div class="msg"> You selected :{{ `index:${selectedIndex}, msg: ${msg}` }}</div>
+    <div class="msg"> You selected :{{ `index:${selectedIndex}, msg: ${msg}, selectedRow: ${selectedRow}, dataProprityCount: ${dataProprityCount}` }}</div>
     <el-tabs v-model="tab" type="card">
       <el-tab-pane label="Pipeline" name="pipeline">
         <Pipeline ref="pipeline" :x="parseInt(form.x)" :y="parseInt(form.y)" :data="data" :showArrow="form.showArrow"
-          :ystep="parseInt(form.ystep)" :xstep="parseInt(form.xstep)" :lineStyle="form.lineStyle" @select="(node) => handleSelect(node)" />
+          :ystep="parseInt(form.ystep)" :xstep="parseInt(form.xstep)" :lineStyle="form.lineStyle"
+          @select="(node) => handleSelect(node)" />
       </el-tab-pane>
       <el-tab-pane label="Data" name="data">
         <div class="accordion" id="accordionExample">
-          <div class="accordion-item" v-for="(item, index) in cache[selectedIndex]" :key="item.id">
-            <h2 class="accordion-header" :id="`heading${index+1}`">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse'+(index+1)" aria-expanded="true" :aria-controls="'collapse'+(index+1)">
-                Record #{{ parseInt(index) + 1 }}
-              </button>
-            </h2>
-            <div :id="'collapse'+(index+1)" class="accordion-collapse collapse show" :aria-labelledby="`heading${index+1}`" data-bs-parent="#accordionExample">
-              <div class="accordion-body">
-                <p v-for="(value, key) in item" :key="key">
-                  {{ `${key}: ${value}` }}
-                </p>
-              </div>
-            </div>
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th scope="col" v-for="(value) in cache[selectedIndex][0].slice(0, dataProprityCount-1)" :key="value">{{ value }}</th>
+                  <th scope="col">{{ '操作' }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="" v-for="(data, index) in cache[selectedIndex].slice(1, cache[selectedIndex].length)"
+                  :key="data"
+                  :class="{ 'bg-warning': data[dataProprityCount-1]}">
+                  <td scope="row" v-for="value in data.slice(0, dataProprityCount-1)" :key="value">{{ value }}</td>
+                  <td scope="row" :data-rowindex="index" @click.prevent="rowClick"><i class="bi bi-check"></i></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+
         </div>
       </el-tab-pane>
 
@@ -42,150 +48,53 @@
   
 <script>
 import Pipeline from './components/Pipeline.vue'
-import { provide,ref } from 'vue';
+import { provide, ref } from 'vue';
 
 export default {
-    name: "app",
-    components: {
-      Pipeline
-    },
-    data() {
-      return {
-        // 这个cache是一个hashmap,用来保存节点对应的index和对应的数据
-        cache:{
-          0:[
-            {
-              id: 0,
-              name:'name0-0'
-            },{
-              id:1,
-              name:'name0-1'
-            }
-          ],
-          1:[
-            {
-              id: 0,
-              name:'name1-0'
-            },{
-              id:1,
-              name:'name1-1'
-            }
-          ],
-          2:[
-            {
-              id: 0,
-              name:'name2-0'
-            },{
-              id:1,
-              name:'name2-1'
-            }
-          ],
-          3:[
-            {
-              id: 0,
-              name:'name3-0'
-            },{
-              id:1,
-              name:'name3-1'
-            }
-          ],
-          4:[
-            {
-              id: 0,
-              name:'name4-0'
-            },{
-              id:1,
-              name:'name4-1'
-            }
-          ],
-          5:[
-            {
-              id: 0,
-              name:'name5-0'
-            },{
-              id:1,
-              name:'name5-1'
-            }
-          ],
-          6:[
-            {
-              id: 0,
-              name:'name6-0'
-            },{
-              id:1,
-              name:'name6-1'
-            }
-          ],
-          7:[
-            {
-              id: 0,
-              name:'name7-0'
-            },{
-              id:1,
-              name:'name7-1'
-            }
-          ],
-          8:[
-            {
-              id: 0,
-              name:'name8-0'
-            },{
-              id:1,
-              name:'name8-1'
-            }
-          ],
-          9:[
-            {
-              id: 0,
-              name:'name9-0'
-            },{
-              id:1,
-              name:'name9-1'
-            }
-          ],
-          10:[
-            {
-              id: 0,
-              name:'name10-0'
-            },{
-              id:1,
-              name:'name10-1'
-            }
-          ],
-          11:[
-            {
-              id: 0,
-              name:'name11-0'
-            },{
-              id:1,
-              name:'name11-1'
-            }
-          ]
-        },
-        // 表示当前选中的节点的index
-        selectedIndex: 0,
-        tab: "pipeline",
+  name: "app",
+  components: {
+    Pipeline
+  },
+  computed: {
+    dataProprityCount() {
+      return this.cache[this.selectedIndex][0].length
+    }
+  },  
+  data() {
+    return {
+      // 这个cache是一个hashmap,用来保存节点对应的index和对应的数据
+      cache: {
+        0: [['att1', 'att2', 'att3', 'active'], ['value11', 'value12', 'value13', true], ['value21', 'value22', 'value23', false]],
+        1: [['att1', 'att2', 'active'], ['value11', 'value12', false], ['value21', 'value22', true]],
+        2: [['att1', 'att2', 'att3', 'active'], ['value11', 'value12', 'value13', true], ['value21', 'value22', 'value23', false]],
+      },
+      // 表示当前选中的节点的index
+      selectedIndex: 0,
+      selectedRow: null,
+      highlight: [[0, 0], [1, 1]],
+      tab: "pipeline",
 
-        data: [
-          {name: "S", hint:"url", status: "start", "next":[]},
-          {name: "S", hint:"url", status: "start", "next":[]},
-          {name: "SB", hint:"SB", status: "success", "next":[{index:0, weight:2}, {index:1, weight:2}]}
-        ],
-        form: {
-          x:50,
-          y: 55,
-          xstep: 120,
-          ystep: 70,
-          data: 0,
-          showArrow: true,
-          lineStyle: "default",
-          from: 0,
-          to: 0
-        },
-        msg: "ha",
-        cmd_tab : "1",
-        command : ref("")
-      };
+
+      data: [
+        { name: "S", hint: "url", status: "start", "next": [] },
+        { name: "S", hint: "url", status: "start", "next": [] },
+        { name: "SB", hint: "SB", status: "success", "next": [{ index: 0, weight: 2 }, { index: 1, weight: 2 }] }
+      ],
+      form: {
+        x: 50,
+        y: 55,
+        xstep: 120,
+        ystep: 70,
+        data: 0,
+        showArrow: true,
+        lineStyle: "default",
+        from: 0,
+        to: 0
+      },
+      msg: "ha",
+      cmd_tab: "1",
+      command: ref("")
+    };
   },
   methods: {
     handleSelect(node) {
@@ -193,6 +102,16 @@ export default {
     },
     updateGraph() {
       this.msg = this.command;
+    },
+    rowClick(event) {
+      const tagName = event.target.tagName
+      let element = event.target
+      if (tagName !== 'TD') {
+        element = element.parentElement
+      }
+      this.selectedRow = element.dataset['rowindex'];
+      // 与后端通信 获得highlight属性
+
     }
   },
   // 这边使用provide/inject机制双向数据绑定PipelineNode.vue中的selectedIndex
@@ -216,7 +135,7 @@ export default {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  margin: 30px 30px;
+  margin: 0px 0px;
 
   /* margin-top: 60px; */
 
@@ -227,22 +146,12 @@ export default {
   /* flex-direction: column; */
 }
 
-.setting {
-  margin: 30px;
-  width: 800px;
-}
-
-.addline {
-  display: flex;
-  width: 300px;
-}
-
-.addline > *:not(:first-child) {
-  margin-left: 5px;
-}
-
 .msg {
   height: 20px;
   margin: 20px auto;
+}
+
+Pipeline {
+  margin: auto 0;
 }
 </style>
